@@ -3,26 +3,27 @@ import './TodoItem.css';
 
 class TodoItem extends Component {
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return this.props.checked !== nextProps.checked;
-    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return this.props.completed !== nextProps.completed;
+    // }
     
     render() {
-        const { text, checked, id, onToggle, onRemove } = this.props;
-        console.log(id);
+        const { id, item, completed, onToggle, onRemove } = this.props;
         return (
             <div className="todo-item" onClick={() => onToggle(id)}>
                 <div className="remove" onClick={(e) => {
                     e.stopPropagation();
                     onRemove(id)}
                 }>&times;</div>
-                <div className={`todo-text ${checked && 'checked'}`}>
-                    <div>{text}</div>
+                <div className={`todo-text ${completed && 'checked'}`}>
+                    <div>{item}</div>
                 </div>
+                
                 {
-                    checked && (<div className="check-mark">✓</div>)
+                    completed && (<div className="check-mark">✓</div>)
                 }
             </div>
+
         );
     }
 }

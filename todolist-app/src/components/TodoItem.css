@@ -8,7 +8,7 @@
 }
 
 .todo-item:hover {
-    background: #e3fafc;
+    background: #e3e7fc;
 }
 
 .todo-item:hover .remove {
@@ -27,19 +27,20 @@
 }
 
 .todo-text {
+    color: #838383;
     flex: 1;
     word-break: break-all;
 }
 
 .checked {
     text-decoration: line-through;
-    color: #abd5bd;
+    color: #e5dbff;
 }
 
 .check-mark {
     font-size: 1.5rem;
     line-height: 1rem;
     margin-left: 1rem;
-    color: #3bc9db;
+    color: #b197fc;
     font-weight: 800;
 }

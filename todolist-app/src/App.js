@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
-import TodoTemplate from './components/TodoTemplate'
-import Form from './components/Form'
+import TodoTemplate from './components/TodoTemplate';
+import Form from './components/Form';
 import TodoItemList from './components/TodoItemList';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import TodoListComponent from './components/TodoListComponent';
-import HeaderComponent from './components/HeaderComponent';
-import FooterComponent from './components/FooterComponent';
+import TodoService from './service/TodoService';
+import { placeholder } from '@babel/types';
 
 class App extends Component {
-  id = 3;
+
   state = {
     input:'',
-    todos: [
-      { id: 0, text: ' ㅎㅎㅎ', checked: false },
-      { id: 1, text: ' ㅎㅎㅎ', checked: true },
-      { id: 2, text: ' ㅎㅎㅎ', checked: false}
-    ]
+    todos: []
+  }
+
+  componentDidMount() {
+    TodoService.getTodos().then((res)=> {
+      this.setState({
+        todos : res.data
+      });
+    })
   }
 
   handleChange = (e) => {
@@ -24,14 +26,24 @@ class App extends Component {
     });
   }
 
-  handleCreate = () => {
-    const { input, todos } = this.state;
+  setData(t) {
     this.setState({
       input: '',
-      todos: todos.concat({
-        id: this.id++,
-        text: input,
-        checked: false
+      todos: t
+    });
+  }
+
+  handleCreate = () => {
+    const { input } = this.state;
+    TodoService.createTodo({
+      item : input,
+      completed : false
+    }, ()=>{
+      TodoService.getTodos().then((res) => {
+        this.setState({
+          input : '',
+          todos: res.data
+        })
       })
     });
   }
@@ -50,12 +62,13 @@ class App extends Component {
 
     nextTodos[index] = {
       ...selected,
-      checked: !selected.checked
+      completed: !selected.completed
     };
 
     this.setState({
       todos: nextTodos
     });
+    TodoService.updateTodoComp(id, nextTodos[index].completed);
   }
 
   handleRemove = (id) => {
@@ -63,6 +76,7 @@ class App extends Component {
     this.setState({
       todos: todos.filter(todo => todo.id !== id)
     });
+    TodoService.deleteTodo(id);
   }
 
   render() {
@@ -74,29 +88,20 @@ class App extends Component {
       handleToggle,
       handleRemove
     } = this;
-
     return (
       <div>
-        <TodoTemplate form={(
+        <TodoTemplate 
+        form={(
           <Form
             value={input}
             onKeyPress={handleKeyPress}
             onChange={handleChange}
-            onCreate={handleCreate}
-          />
-        )}>
-        <TodoItemList todos={todos} onToggle={handleToggle} onRemove={handleRemove}/>
+            onCreate={handleCreate}/>)}>
+        <TodoItemList
+          todos={todos}
+          onRemove={handleRemove}
+          onToggle={handleToggle}/>
         </TodoTemplate>
-        {/* <Router>
-          <HeaderComponent/>
-            <div className="container">
-              <Switch>
-                <Route path = "/" exact component = {TodoListComponent}></Route>
-                <Route path = "/todo" component = {TodoListComponent}></Route>
-              </Switch>
-            </div>
-          <FooterComponent/>
-        </Router> */}
       </div>
     );
   }
